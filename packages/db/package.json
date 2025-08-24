@@ -1,0 +1,26 @@
+{
+  "name": "@workspace/db",
+  "version": "1.0.0",
+  "description": "@workspace/db",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "prisma generate"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@workspace/typescript-config": "workspace:*",
+    "tsup": "^8.5.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "latest",
+    "prisma": "^6.8.2"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
