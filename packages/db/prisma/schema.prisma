@@ -7,3 +7,61 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          String      @id @unique @default(uuid())
+  name        String?
+  email       String
+  accountType AccountType
+  password    String?
+  rooms       Room[]
+}
+
+model Room {
+  id       String    @id @unique @default(uuid())
+  name     String
+  video    String
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
+  summary  String
+  chapters Chapter[]
+  chats    Chat[]
+  cards    Card[]
+}
+
+model Card {
+  id      String @id @unique @default(uuid())
+  content String
+  color   String
+  roomId  String
+  room    Room   @relation(fields: [roomId], references: [id])
+}
+
+model Chapter {
+  id        String   @id @unique @default(uuid())
+  title     String
+  content   String
+  startTime DateTime
+  endTime   DateTime
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id])
+}
+
+model Chat {
+  id        String     @id @unique @default(uuid())
+  prompt    String
+  prompType PromptType
+  roomId    String
+  room      Room       @relation(fields: [roomId], references: [id])
+}
+
+enum AccountType {
+  CREDENTIALS
+  GOOGLE
+  GITHUB
+}
+
+enum PromptType {
+  USER
+  SYSTEM
+}
