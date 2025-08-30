@@ -18,15 +18,16 @@ model User {
 }
 
 model Room {
-  id       String    @id @unique @default(uuid())
-  name     String
-  video    String
-  userId   String
-  user     User      @relation(fields: [userId], references: [id])
-  summary  String
-  chapters Chapter[]
-  chats    Chat[]
-  cards    Card[]
+  id              String    @id @unique @default(uuid())
+  name            String
+  video           String
+  transcribedText String
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  summary         String
+  chapters        Chapter[]
+  chats           Chat[]
+  cards           Card[]
 }
 
 model Card {

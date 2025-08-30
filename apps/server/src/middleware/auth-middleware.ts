@@ -20,11 +20,15 @@ export const authMiddleWare = async (
 
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+
     const validUser = await prisma.user.findFirst({
       where: {
         email: decoded.email,
       },
     });
+
+    req.headers["userId"] = validUser?.id;
+    req.headers["userEmail"] = validUser?.email;
 
     if (validUser) {
       next();

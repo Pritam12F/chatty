@@ -3,6 +3,7 @@ import cors from "cors";
 import { signUpRouter } from "./routes/auth/sign-up";
 import { authMiddleWare } from "./middleware/auth-middleware";
 import "dotenv/config";
+import { addRoomRouter } from "./routes/room/add-room";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -12,7 +13,9 @@ app.use(express.json());
 
 app.use("/auth/signup", signUpRouter);
 
-app.get("/", authMiddleWare, async (_req, res) => {
+app.use("/room/create", addRoomRouter);
+
+app.get("/", async (_req, res) => {
   res.send("Hello from Express in Turborepo 🚀");
 });
 
