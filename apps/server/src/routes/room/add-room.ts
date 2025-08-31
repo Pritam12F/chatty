@@ -14,13 +14,12 @@ import {
 } from "../../constants/prompts";
 import { CardType, ChapterType } from "@workspace/types";
 
-export const addRoomRouter: Router = Router();
-
 async function getVideoTitle(videoUrl: string) {
   const info = await ytdl.getInfo(videoUrl);
   return {
     title: info.videoDetails.title,
     url: info.videoDetails.video_url,
+    id: info.videoDetails.videoId,
   };
 }
 
@@ -139,9 +138,11 @@ async function convertToMP3(videoPath: string, audioPath: string) {
   });
 }
 
+export const addRoomRouter: Router = Router();
+
 addRoomRouter.post("/", async (req, res) => {
   const { videoUrl } = req.body;
-  const videoId = videoUrl.split("=")[1] as string;
+  const { title, url, id: videoId } = await getVideoTitle(videoUrl);
   const videoPath = videoId.concat(".mp4");
   const audioPath = videoId.concat(".mp3");
   const userId = req.headers["userId"] as string;
@@ -162,8 +163,6 @@ addRoomRouter.post("/", async (req, res) => {
     fs.unlink(audioPath, () => {
       console.log("audio cleaned up");
     });
-
-    const { title, url } = await getVideoTitle(videoUrl);
 
     const summary = await generateSummary(transcribedText.text);
 
