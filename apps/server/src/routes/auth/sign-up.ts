@@ -8,11 +8,9 @@ signUpRouter.post("/", async (req, res) => {
   const { success, data } = signUpSchema.safeParse(req.body);
 
   if (!success) {
-    res
-      .json({
-        message: "Invalid inputs for signup process",
-      })
-      .status(402);
+    res.status(402).json({
+      message: "Invalid inputs for signup process",
+    });
 
     return;
   }
@@ -25,11 +23,9 @@ signUpRouter.post("/", async (req, res) => {
     });
 
     if (userExists) {
-      res
-        .json({
-          message: "User already signedup",
-        })
-        .status(403);
+      res.status(403).json({
+        message: "User already signedup",
+      });
 
       return;
     }
@@ -42,6 +38,6 @@ signUpRouter.post("/", async (req, res) => {
   } catch (e) {
     console.error(e);
 
-    res.json({ message: "Internal server error occured" }).status(500);
+    res.status(500).json({ message: "Internal server error occured" });
   }
 });

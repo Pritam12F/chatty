@@ -11,7 +11,7 @@ import {
   generateChaptersPrompt,
   generateSummaryPrompt,
   summaryUserPrompt,
-} from "@workspace/db/constants/prompts";
+} from "../../constants/prompts";
 import { CardType, ChapterType } from "@workspace/types";
 
 export const addRoomRouter: Router = Router();
@@ -104,6 +104,41 @@ async function generateCards(transcribedText: string, newRoomId: string) {
   );
 }
 
+async function downloadVideo(videoUrl: string, videoPath: string) {
+  return new Promise<void>((res, rej) => {
+    ytdl(videoUrl, {
+      filter: (format) => format.container === "mp4",
+      quality: 18,
+    })
+      .pipe(fs.createWriteStream(videoPath))
+      .on("error", (e) => {
+        console.error(e);
+
+        rej();
+      })
+      .on("finish", () => {
+        console.log("Successfully downloaded video");
+        res();
+      });
+  });
+}
+
+async function convertToMP3(videoPath: string, audioPath: string) {
+  return new Promise<void>((res, rej) => {
+    ffmpeg(videoPath)
+      .toFormat("mp3")
+      .save(audioPath)
+      .on("end", () => {
+        console.log("Successfully convert to audio");
+        res();
+      })
+      .on("error", (e) => {
+        console.error(e);
+        rej();
+      });
+  });
+}
+
 addRoomRouter.post("/", async (req, res) => {
   const { videoUrl } = req.body;
   const videoId = videoUrl.split("=")[1] as string;
@@ -112,84 +147,47 @@ addRoomRouter.post("/", async (req, res) => {
   const userId = req.headers["userId"] as string;
 
   try {
-    const video = ytdl(videoUrl, {
-      filter: (format) => format.container === "mp4",
-      quality: 18,
-    }).pipe(fs.createWriteStream(videoPath));
+    await downloadVideo(videoUrl, videoPath);
+    await convertToMP3(videoPath, audioPath);
 
-    video.on("error", (e) => {
-      console.error(e);
-
-      res
-        .json({
-          erro: "Error occured when downloading video",
-        })
-        .status(403);
-
-      return;
+    const transcribedText = await openAIClient.audio.transcriptions.create({
+      file: fs.createReadStream(audioPath),
+      model: "whisper-1",
     });
 
-    video.on("finish", async () => {
-      ffmpeg(videoPath)
-        .toFormat("mp3")
-        .save(audioPath)
-        .on("end", async () => {
-          console.log("Conversion finished!");
-
-          const transcribedText =
-            await openAIClient.audio.transcriptions.create({
-              file: fs.createReadStream(audioPath),
-              model: "whisper-1",
-            });
-
-          fs.unlink(videoPath, () => {
-            console.log("video cleaned up");
-          });
-
-          fs.unlink(audioPath, () => {
-            console.log("audio cleaned up");
-          });
-
-          const { title, url } = await getVideoTitle(videoUrl);
-
-          const summary = await generateSummary(transcribedText.text);
-
-          const newRoom = await prisma.room.create({
-            data: {
-              name: title,
-              video: url,
-              transcribedText: transcribedText.text,
-              summary,
-              userId,
-            },
-          });
-
-          await generateChapters(transcribedText.text, newRoom.id);
-          await generateCards(transcribedText.text, newRoom.id);
-
-          res.json({
-            message: "Video was successfully transcribed!",
-          });
-
-          return;
-        })
-        .on("error", (err) => {
-          console.error("Error converting:", err);
-
-          res
-            .json({
-              error: "Error transcribing video",
-            })
-            .status(402);
-
-          return;
-        });
+    fs.unlink(videoPath, () => {
+      console.log("video cleaned up");
     });
-  } catch {
-    res
-      .json({
-        error: "Internal server error occured",
-      })
-      .status(500);
+
+    fs.unlink(audioPath, () => {
+      console.log("audio cleaned up");
+    });
+
+    const { title, url } = await getVideoTitle(videoUrl);
+
+    const summary = await generateSummary(transcribedText.text);
+
+    const newRoom = await prisma.room.create({
+      data: {
+        name: title,
+        video: url,
+        transcribedText: transcribedText.text,
+        summary,
+        userId,
+      },
+    });
+
+    await generateChapters(transcribedText.text, newRoom.id);
+    await generateCards(transcribedText.text, newRoom.id);
+
+    res.json({
+      message: "Video successfully transcribed!",
+    });
+  } catch (e) {
+    console.error(e);
+
+    res.status(500).json({
+      error: "Internal server error occured",
+    });
   }
 });

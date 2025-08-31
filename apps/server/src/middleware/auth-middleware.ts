@@ -35,10 +35,8 @@ export const authMiddleWare = async (
     }
   } catch (e) {
     console.error(e);
-    res
-      .json({
-        message: "Invalid token",
-      })
-      .status(411);
+    res.status(411).json({
+      message: "Invalid token",
+    });
   }
 };
