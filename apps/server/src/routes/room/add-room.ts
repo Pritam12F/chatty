@@ -4,7 +4,7 @@ import fs from "fs";
 import ytdl from "@distube/ytdl-core";
 import ffmpeg from "fluent-ffmpeg";
 import { openAIClient } from "../../lib/open-ai";
-import { addRoomSchema, CardType, ChapterType } from "@workspace/types";
+import { addRoomSchema } from "@workspace/types";
 
 async function getVideoTitle(videoUrl: string) {
   const info = await ytdl.getInfo(videoUrl);
@@ -13,68 +13,6 @@ async function getVideoTitle(videoUrl: string) {
     url: info.videoDetails.video_url,
     id: info.videoDetails.videoId,
   };
-}
-
-async function generateChapters(transcribedText: string, newRoomId: string) {
-  const generatedChaptersRaw = await openAIClient.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content: generateChaptersPrompt(transcribedText),
-      },
-      {
-        role: "user",
-        content: chapterUserPrompt,
-      },
-    ],
-  });
-
-  const generatedChapters: ChapterType[] = JSON.parse(
-    generatedChaptersRaw.choices[0]?.message.content!
-  );
-
-  await Promise.all(
-    generatedChapters.map(async (chapter) => {
-      return await prisma.chapter.create({
-        data: {
-          roomId: newRoomId,
-          ...chapter,
-        },
-      });
-    })
-  );
-}
-
-async function generateCards(transcribedText: string, newRoomId: string) {
-  const generatedCardsRaw = await openAIClient.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content: generateCardsPrompt(transcribedText),
-      },
-      {
-        role: "user",
-        content: cardUserPrompt,
-      },
-    ],
-  });
-
-  const generatedCards: CardType[] = JSON.parse(
-    generatedCardsRaw.choices[0]?.message.content!
-  );
-
-  await Promise.all(
-    generatedCards.map(async (card) => {
-      return await prisma.card.create({
-        data: {
-          roomId: newRoomId,
-          ...card,
-        },
-      });
-    })
-  );
 }
 
 async function downloadVideo(videoUrl: string, videoPath: string) {
@@ -155,9 +93,6 @@ addRoomRouter.post("/", async (req, res) => {
         userId,
       },
     });
-
-    await generateChapters(transcribedText.text, newRoom.id);
-    await generateCards(transcribedText.text, newRoom.id);
 
     res.json({
       message: "Video successfully transcribed!",
