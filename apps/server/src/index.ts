@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.use("/auth/signup", signUpRouter);
 
-app.use("/room/create", addRoomRouter);
+app.use("/room/create", authMiddleWare, addRoomRouter);
 
 app.get("/", async (_req, res) => {
   res.send("Hello from Express in Turborepo 🚀");
