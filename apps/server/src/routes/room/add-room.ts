@@ -4,14 +4,6 @@ import fs from "fs";
 import ytdl from "@distube/ytdl-core";
 import ffmpeg from "fluent-ffmpeg";
 import { openAIClient } from "../../lib/open-ai";
-import {
-  cardUserPrompt,
-  chapterUserPrompt,
-  generateCardsPrompt,
-  generateChaptersPrompt,
-  generateSummaryPrompt,
-  summaryUserPrompt,
-} from "../../constants/prompts";
 import { addRoomSchema, CardType, ChapterType } from "@workspace/types";
 
 async function getVideoTitle(videoUrl: string) {
@@ -21,24 +13,6 @@ async function getVideoTitle(videoUrl: string) {
     url: info.videoDetails.video_url,
     id: info.videoDetails.videoId,
   };
-}
-
-async function generateSummary(transcribedText: string): Promise<string> {
-  const generatedSummary = await openAIClient.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content: generateSummaryPrompt(transcribedText),
-      },
-      {
-        role: "user",
-        content: summaryUserPrompt,
-      },
-    ],
-  });
-
-  return generatedSummary.choices[0]?.message.content!;
 }
 
 async function generateChapters(transcribedText: string, newRoomId: string) {
@@ -173,14 +147,11 @@ addRoomRouter.post("/", async (req, res) => {
       console.log("audio cleaned up");
     });
 
-    const summary = await generateSummary(transcribedText.text);
-
     const newRoom = await prisma.room.create({
       data: {
         name: title,
         video: url,
         transcribedText: transcribedText.text,
-        summary,
         userId,
       },
     });
@@ -190,6 +161,7 @@ addRoomRouter.post("/", async (req, res) => {
 
     res.json({
       message: "Video successfully transcribed!",
+      roomId: newRoom.id,
     });
   } catch (e) {
     console.error(e);

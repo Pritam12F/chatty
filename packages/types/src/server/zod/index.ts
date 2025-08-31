@@ -11,6 +11,18 @@ export const addRoomSchema = z.object({
   videoUrl: z.string().nonempty(),
 });
 
+export const generateSummarySchema = z.object({
+  roomId: z.string().nonempty(),
+});
+
+export const generateChaptersSchema = z.object({
+  roomId: z.string().nonempty(),
+});
+
+export const generateCardschema = z.object({
+  roomId: z.string().nonempty(),
+});
+
 export const deleteRoomSchema = z.object({
   roomId: z.string().nonempty(),
 });

@@ -24,7 +24,7 @@ model Room {
   transcribedText String
   userId          String
   user            User      @relation(fields: [userId], references: [id])
-  summary         String
+  summary         String?
   chapters        Chapter[]
   chats           Chat[]
   cards           Card[]
