@@ -6,3 +6,11 @@ export const signUpSchema = z.object({
   accountType: z.enum(["CREDENTIALS", "GOOGLE", "GITHUB"]),
   password: z.string().optional(),
 });
+
+export const addRoomSchema = z.object({
+  videoUrl: z.string().nonempty(),
+});
+
+export const deleteRoomSchema = z.object({
+  roomId: z.string().nonempty(),
+});

@@ -27,10 +27,9 @@ export const authMiddleWare = async (
       },
     });
 
-    req.headers["userId"] = validUser?.id;
-    req.headers["userEmail"] = validUser?.email;
-
     if (validUser) {
+      req.headers["userId"] = validUser?.id;
+      req.headers["userEmail"] = validUser?.email;
       next();
     }
   } catch (e) {

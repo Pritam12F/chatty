@@ -12,7 +12,7 @@ import {
   generateSummaryPrompt,
   summaryUserPrompt,
 } from "../../constants/prompts";
-import { CardType, ChapterType } from "@workspace/types";
+import { addRoomSchema, CardType, ChapterType } from "@workspace/types";
 
 async function getVideoTitle(videoUrl: string) {
   const info = await ytdl.getInfo(videoUrl);
@@ -141,14 +141,23 @@ async function convertToMP3(videoPath: string, audioPath: string) {
 export const addRoomRouter: Router = Router();
 
 addRoomRouter.post("/", async (req, res) => {
-  const { videoUrl } = req.body;
-  const { title, url, id: videoId } = await getVideoTitle(videoUrl);
+  const { success, data } = addRoomSchema.safeParse(req.body);
+
+  if (!success) {
+    res.status(405).json({
+      error: "Invalid inputs",
+    });
+
+    return;
+  }
+
+  const { title, url, id: videoId } = await getVideoTitle(data.videoUrl);
   const videoPath = videoId.concat(".mp4");
   const audioPath = videoId.concat(".mp3");
   const userId = req.headers["userId"] as string;
 
   try {
-    await downloadVideo(videoUrl, videoPath);
+    await downloadVideo(data.videoUrl, videoPath);
     await convertToMP3(videoPath, audioPath);
 
     const transcribedText = await openAIClient.audio.transcriptions.create({
@@ -186,7 +195,7 @@ addRoomRouter.post("/", async (req, res) => {
     console.error(e);
 
     res.status(500).json({
-      error: "Internal server error occured",
+      error: e instanceof Error ? e.message : "Internal server error occured",
     });
   }
 });
