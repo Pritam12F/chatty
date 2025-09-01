@@ -10,14 +10,17 @@ export default function Footer() {
           <div className="ml-4 col-span-9 sm:mx-5 sm:col-span-5 md:col-span-6 lg:col-span-6">
             <Link
               href={"/"}
-              className="flex items-center space-x-2.5 lg:ml-10"
+              aria-label="Go to Chatty home"
+              className="group inline-flex items-center gap-3 lg:ml-10 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               style={{ cursor: "pointer" }}
             >
-              <div className="flex relative rounded-lg p-3 bg-gradient-to-br from-blue-500 to-blue-700">
-                <PlayCircle className="text-white" />
+              <div className="relative flex items-center justify-center w-10 h-10 rounded-md bg-blue-600 text-white ring-1 ring-white/15 transition-colors duration-200 group-hover:bg-blue-500">
+                <PlayCircle className="h-5 w-5" aria-hidden="true" />
               </div>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-700">
-                <h1 className="text-[21px] font-semibold">Chatty</h1>
+              <span className="text-white">
+                <h1 className="text-[21px] font-semibold leading-none tracking-tight">
+                  Chatty
+                </h1>
               </span>
             </Link>
           </div>
@@ -77,7 +80,8 @@ export default function Footer() {
       <div className="border-t text-center border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4 py-6">
           <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-            © 2025 Chatty. Made with ❤️ by Pritam.
+            © 2025 Chatty. Made with <span className="mx-1">❤️</span> by
+            Pritam.
           </p>
         </div>
       </div>
