@@ -1,3 +1,4 @@
+import useAxios from "@/hooks/use-axios";
 import { PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
@@ -14,8 +15,8 @@ export default function Footer() {
               className="group inline-flex items-center gap-3 lg:ml-10 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               style={{ cursor: "pointer" }}
             >
-              <div className="relative flex items-center justify-center w-10 h-10 rounded-md bg-blue-600 text-white ring-1 ring-white/15 transition-colors duration-200 group-hover:bg-blue-500">
-                <PlayCircle className="h-5 w-5" aria-hidden="true" />
+              <div className="relative flex items-center justify-center w-12 h-12 rounded-md bg-blue-600 text-white ring-1 ring-white/15 transition-colors duration-200 group-hover:bg-blue-500">
+                <PlayCircle className="h-7 w-7" aria-hidden="true" />
               </div>
               <span className="text-white">
                 <h1 className="text-[21px] font-semibold leading-none tracking-tight">
