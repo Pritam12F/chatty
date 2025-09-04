@@ -4,7 +4,7 @@ export const signUpSchema = z.object({
   name: z.string().optional(),
   email: z.string().email({ message: "Not a valid email" }).nonempty(),
   accountType: z.enum(["CREDENTIALS", "GOOGLE", "GITHUB"]),
-  password: z.string().optional(),
+  password: z.string(),
 });
 
 export const addRoomSchema = z.object({
