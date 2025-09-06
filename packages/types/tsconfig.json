@@ -1,11 +1,8 @@
 {
-  "extends": "@workspace/typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@workspace/db/*": ["./src/*"]
-    }
-  },
-  "include": ["."],
-  "exclude": ["node_modules", "dist"]
+    "module": "nodenext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "esModuleInterop": true
+  }
 }

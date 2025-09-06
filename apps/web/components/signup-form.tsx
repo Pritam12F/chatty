@@ -24,6 +24,7 @@ export const SignUpForm = () => {
   const form = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -48,7 +49,7 @@ export const SignUpForm = () => {
     }
   }
   return (
-    <div className="w-full max-w-[700px] mx-auto px-4 min-h-screen space-y-16 pt-48 pb-30 flex flex-col items-center">
+    <div className="w-full max-w-[700px] mx-auto px-4 min-h-screen space-y-16 pt-40 pb-30 flex flex-col items-center">
       <div className="text-center text-3xl font-bold">Join now</div>
       <div className="w-full max-w-[400px]">
         <Form {...form}>
@@ -56,6 +57,18 @@ export const SignUpForm = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-8 w-full"
           >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Your name..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -116,7 +129,7 @@ export const SignUpForm = () => {
         <Button
           variant={"link"}
           className="cursor-pointer"
-          onClick={() => router.push("/sign-in")}
+          onClick={() => router.push("/signin")}
         >
           Login now
         </Button>
