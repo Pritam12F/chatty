@@ -83,7 +83,7 @@ export const authOptions = {
       if (account?.provider === "google" || account?.provider === "github") {
         const userExists = await prisma.user.findFirst({
           where: {
-            id: user.id,
+            email: user.email,
           },
         });
 
