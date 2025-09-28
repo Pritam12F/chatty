@@ -13,8 +13,6 @@ import {
   MessageSquare,
   FileText,
   Clock,
-  Plus,
-  Youtube,
   Sparkles,
   TrendingUp,
   Video,
@@ -208,8 +206,8 @@ export default async function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-black">
-      <div className="container mx-auto px-6 py-12 max-w-7xl">
+    <div className="min-h-screen w-full pt-5 px-5 bg-black">
+      <div className="container mx-auto px-6 py-12">
         <WelcomeHeader />
         <AddVideo />
         <QuickActions />

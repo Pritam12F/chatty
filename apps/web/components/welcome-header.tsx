@@ -7,9 +7,6 @@ export const WelcomeHeader = async () => {
     <div className="flex items-center justify-between mb-12">
       <div className="flex items-center space-x-6">
         <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg">
-            <Sparkles className="w-7 h-7 text-primary-foreground" />
-          </div>
           <div>
             <h1 className="text-4xl font-bold text-foreground mb-1 text-balance">
               Welcome back, {session?.user?.name || "Anonymous"}
