@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import {
   Card,
@@ -10,13 +7,7 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card";
 import { Badge } from "@workspace/ui/components/badge";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@workspace/ui/components/avatar";
 import { Separator } from "@workspace/ui/components/separator";
-import { Input } from "@workspace/ui/components/input";
 import {
   PlayCircle,
   MessageSquare,
@@ -31,40 +22,18 @@ import {
   Star,
   BookOpen,
   Zap,
-  Target,
-  Award,
   Activity,
   Eye,
   Share2,
   Download,
   Filter,
-  Search,
-  Link,
 } from "lucide-react";
+import { getServerSession } from "next-auth";
+import AddVideo from "@/components/add-video";
+import { WelcomeHeader } from "@/components/welcome-header";
+import { QuickActions } from "@/components/quick-actions";
 
-export default function Dashboard() {
-  const [userName] = useState("Alex");
-  const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleAnalyzeVideo = async () => {
-    if (!youtubeUrl.trim()) return;
-
-    const youtubeRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)/;
-    if (!youtubeRegex.test(youtubeUrl)) {
-      alert("Please enter a valid YouTube URL");
-      return;
-    }
-
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      setYoutubeUrl("");
-      alert("Video analysis started! Check your recent chats.");
-    }, 2000);
-  };
-
+export default async function Dashboard() {
   const recentChats = [
     {
       id: 1,
@@ -239,154 +208,11 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-12 max-w-7xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg">
-                <Sparkles className="w-7 h-7 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold text-foreground mb-1 text-balance">
-                  Welcome back, {userName}
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  Ready to explore some YouTube content?
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 bg-primary/10 px-3 py-2 rounded-full">
-              <Award className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">
-                Learning Streak: 7 days
-              </span>
-            </div>
-            <Avatar className="w-14 h-14 ring-2 ring-primary/20">
-              <AvatarImage src="/placeholder-user.jpg" alt={userName} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
-                {userName.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
-
-        {/* YouTube URL Input Section */}
-        <Card className="mb-12 bg-gradient-to-r from-blue-500/5 via-primary/5 to-black/20 border-blue-500/20 backdrop-blur-sm">
-          <CardContent className="p-8">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                <Youtube className="w-6 h-6 text-blue-500" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground mb-1">
-                  Analyze YouTube Video
-                </h2>
-                <p className="text-muted-foreground">
-                  Paste any YouTube URL to get instant summaries, chapters, and
-                  start chatting
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex-1 relative">
-                <Link className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                  className="pl-10 h-12 text-base bg-background/50 border-border/50 focus:border-blue-500/50 focus:ring-blue-500/20 text-white placeholder:text-gray-400"
-                  onKeyDown={(e) => e.key === "Enter" && handleAnalyzeVideo()}
-                />
-              </div>
-              <Button
-                onClick={handleAnalyzeVideo}
-                disabled={!youtubeUrl.trim() || isProcessing}
-                className="h-12 px-8 bg-blue-500 hover:bg-blue-600 text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isProcessing ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                    Processing...
-                  </>
-                ) : (
-                  <span className="flex items-center gap-2 cursor-pointer transition-transform group-hover:translate-x-1">
-                    <Search className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span className="font-semibold tracking-wide">
-                      Analyze Video
-                    </span>
-                  </span>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <Card className="group hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 cursor-pointer border-border/50 hover:border-primary/30 bg-card/50 backdrop-blur-sm">
-            <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
-                <Plus className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-3 text-lg">
-                New Chat
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Start a conversation with any video
-              </p>
-              <ArrowRight className="w-4 h-4 text-primary mx-auto mt-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300 cursor-pointer border-border/50 hover:border-red-500/30 bg-card/50 backdrop-blur-sm">
-            <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-red-500/20 transition-colors">
-                <Youtube className="w-8 h-8 text-red-500" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-3 text-lg">
-                Analyze Video
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Get instant summaries & chapters
-              </p>
-              <ArrowRight className="w-4 h-4 text-red-500 mx-auto mt-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 cursor-pointer border-border/50 hover:border-blue-500/30 bg-card/50 backdrop-blur-sm">
-            <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/20 transition-colors">
-                <FileText className="w-8 h-8 text-blue-500" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-3 text-lg">
-                View Summaries
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Browse your saved summaries
-              </p>
-              <ArrowRight className="w-4 h-4 text-blue-500 mx-auto mt-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-xl hover:shadow-green-500/5 transition-all duration-300 cursor-pointer border-border/50 hover:border-green-500/30 bg-card/50 backdrop-blur-sm">
-            <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-green-500/20 transition-colors">
-                <TrendingUp className="w-8 h-8 text-green-500" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-3 text-lg">
-                Analytics
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Track your learning progress
-              </p>
-              <ArrowRight className="w-4 h-4 text-green-500 mx-auto mt-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </CardContent>
-          </Card>
-        </div>
+        <WelcomeHeader />
+        <AddVideo />
+        <QuickActions />
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">

@@ -38,6 +38,7 @@ model Video {
   videoId     String
   title       String
   description String?
+  thumbnail   String?
   duration    DateTime
   url         String
   roomId      String   @unique

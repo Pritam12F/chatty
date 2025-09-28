@@ -14,6 +14,7 @@ async function getVideoTitle(videoUrl: string) {
     url: info.videoDetails.video_url,
     duration: info.videoDetails.lengthSeconds,
     description: info.videoDetails.description,
+    thumbnail: info.videoDetails.thumbnail.thumbnails.find((t) => t.url)?.url,
   };
 }
 
@@ -71,6 +72,7 @@ addRoomRouter.post("/", async (req, res) => {
     id: videoId,
     description,
     duration,
+    thumbnail,
   } = await getVideoTitle(data.videoUrl);
   const videoPath = videoId.concat(".mp4");
   const audioPath = videoId.concat(".mp3");
@@ -110,6 +112,7 @@ addRoomRouter.post("/", async (req, res) => {
           videoId,
           roomId: room.id,
           duration: new Date(parseInt(duration) * 1000),
+          thumbnail,
         },
       });
 
