@@ -17,6 +17,7 @@ export const authOptions = {
         if (!credentials?.email && !credentials?.password) {
           return null;
         }
+
         try {
           const userExists = await prisma.user.findFirst({
             where: {
@@ -25,14 +26,17 @@ export const authOptions = {
           });
 
           if (!userExists) {
+            console.log("Doesnt exist");
             return null;
           }
           if (userExists.accountType !== "CREDENTIALS") {
+            console.log("Not same type");
             throw new Error(
               `User already registered with ${userExists.accountType}`
             );
           }
           if (!bcrypt.compareSync(credentials.password, userExists.password!)) {
+            console.log("Incorrect pass");
             return null;
           }
 
@@ -42,7 +46,8 @@ export const authOptions = {
             email: userExists.email,
             accountType: userExists.accountType,
           };
-        } catch {
+        } catch (e) {
+          console.log(e);
           return null;
         }
       },

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { signUpSchema } from "@workspace/types";
 import { prisma } from "@workspace/db";
+import bcrypt from "bcrypt";
 
 export const signUpRouter: Router = Router();
 
@@ -14,6 +15,8 @@ signUpRouter.post("/", async (req, res) => {
 
     return;
   }
+
+  const dataHashed = { ...data, password: bcrypt.hashSync(data?.password, 10) };
 
   try {
     const userExists = await prisma.user.findFirst({
@@ -30,7 +33,7 @@ signUpRouter.post("/", async (req, res) => {
       return;
     }
 
-    await prisma.user.create({ data });
+    await prisma.user.create({ data: { ...dataHashed } });
 
     res.json({
       message: "User signed up successfully",

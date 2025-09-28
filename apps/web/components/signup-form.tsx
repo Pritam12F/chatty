@@ -43,7 +43,7 @@ export const SignUpForm = () => {
 
     if (res.status === 200) {
       toast.success("User signed up successfully");
-      router.push("/sign-in");
+      router.push("/signin");
     } else {
       toast.error("Error signing up user");
     }
