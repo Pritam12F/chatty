@@ -9,9 +9,11 @@ import { addRoomSchema } from "@workspace/types";
 async function getVideoTitle(videoUrl: string) {
   const info = await ytdl.getInfo(videoUrl);
   return {
+    id: info.videoDetails.videoId,
     title: info.videoDetails.title,
     url: info.videoDetails.video_url,
-    id: info.videoDetails.videoId,
+    duration: info.videoDetails.lengthSeconds,
+    description: info.videoDetails.description,
   };
 }
 
@@ -63,7 +65,13 @@ addRoomRouter.post("/", async (req, res) => {
     return;
   }
 
-  const { title, url, id: videoId } = await getVideoTitle(data.videoUrl);
+  const {
+    title,
+    url,
+    id: videoId,
+    description,
+    duration,
+  } = await getVideoTitle(data.videoUrl);
   const videoPath = videoId.concat(".mp4");
   const audioPath = videoId.concat(".mp3");
   const userId = req.headers["userId"] as string;
@@ -85,18 +93,32 @@ addRoomRouter.post("/", async (req, res) => {
       console.log("audio cleaned up");
     });
 
-    const newRoom = await prisma.room.create({
-      data: {
-        name: title,
-        video: url,
-        transcribedText: transcribedText.text,
-        userId,
-      },
+    const t = await prisma.$transaction(async (tx) => {
+      const room = await tx.room.create({
+        data: {
+          name: title,
+          transcribedText: transcribedText.text,
+          userId,
+        },
+      });
+
+      await tx.video.create({
+        data: {
+          title,
+          url,
+          description,
+          videoId,
+          roomId: room.id,
+          duration: new Date(parseInt(duration) * 1000),
+        },
+      });
+
+      return room.id;
     });
 
     res.json({
       message: "Video successfully transcribed!",
-      roomId: newRoom.id,
+      roomId: t,
     });
   } catch (e) {
     console.error(e);

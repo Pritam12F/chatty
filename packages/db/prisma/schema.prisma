@@ -14,20 +14,41 @@ model User {
   email       String
   accountType AccountType
   password    String?
+  isTrial     Boolean     @default(true)
+  hasPaid     Boolean     @default(false) // set to false when user reaches a limit
   rooms       Room[]
 }
 
 model Room {
   id              String    @id @unique @default(uuid())
   name            String
-  video           String
+  video           Video?
   transcribedText String
   userId          String
   user            User      @relation(fields: [userId], references: [id])
   summary         String?
+  activity        Activity[]
   chapters        Chapter[]
   chats           Chat[]
   cards           Card[]
+}
+
+model Video {
+  id          String   @id @unique @default(cuid())
+  videoId     String
+  title       String
+  description String?
+  duration    DateTime
+  url         String
+  roomId      String   @unique
+  room        Room     @relation(fields: [roomId], references: [id])
+}
+
+model Activity {
+  id         String @id @unique @default(cuid())
+  type       ActivityType
+  roomId     String 
+  room       Room   @relation(fields: [roomId], references: [id])
 }
 
 model Card {
@@ -50,6 +71,7 @@ model Chapter {
 
 model Chat {
   id        String     @id @unique @default(uuid())
+  title     String
   prompt    String
   prompType PromptType
   roomId    String
@@ -65,4 +87,11 @@ enum AccountType {
 enum PromptType {
   USER
   SYSTEM
+} 
+
+enum ActivityType {
+  GEN_SUMMARY
+  GEN_CARDS
+  GEN_CHAPTERS
+  START_CHAT
 }
