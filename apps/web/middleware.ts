@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   if (!token && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/signin", request.url));
   } else if (token && ["/signin", "/signup", "/"].includes(pathname)) {
-    return NextResponse.redirect(new URL("/documents", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();

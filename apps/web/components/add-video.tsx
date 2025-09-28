@@ -13,11 +13,11 @@ export default function AddVideo() {
   const handleAnalyzeVideo = useCallback(() => {}, [youtubeUrl]);
 
   return (
-    <Card className="mb-12 bg-gradient-to-r from-blue-800/5 via-primary/5 to-black/20 border-blue-600/20 backdrop-blur-sm">
+    <Card className="mb-12 bg-gradient-to-r from-blue-800/5 via-primary/5 to-black/20 border-blue-700/20 backdrop-blur-sm">
       <CardContent className="p-8">
         <div className="flex items-center space-x-4 mb-6">
-          <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
-            <Youtube className="w-6 h-6 text-blue-500" />
+          <div className="w-12 h-12 border bg-blue-500/10 rounded-xl flex items-center justify-center">
+            <Youtube className="w-6 h-6 text-red-500/90" />
           </div>
           <div>
             <h2 className="text-2xl font-bold text-foreground mb-1">
@@ -44,11 +44,11 @@ export default function AddVideo() {
             onClick={handleAnalyzeVideo}
             disabled={!youtubeUrl.trim() || isProcessing}
             className="relative cursor-pointer h-12 px-8 font-medium text-white 
-             transition-colors duration-500 ease-in-out
-             bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600
-             hover:from-blue-700 hover:via-blue-600 hover:to-indigo-700
-             shadow-lg shadow-blue-900/30 hover:shadow-blue-600/40
-             disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
+             transition-all duration-500 ease-in-out
+             bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900
+             hover:from-blue-800 hover:via-blue-700 hover:to-indigo-800
+             shadow-md shadow-blue-950/40 hover:shadow-blue-700/50
+             disabled:opacity-70 disabled:cursor-not-allowed rounded-xl"
           >
             {isProcessing ? (
               <>
